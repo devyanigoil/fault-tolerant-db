@@ -11,7 +11,7 @@ The goal of this assignment is to use consensus to build a fault-tolerant replic
 
 2. **Coordination server** (Zookeeper): A coordination protocol using Zookeeper as a logically centralized service accessible to all replicas;
 
-3. **Custom protocol (optional extra credit)** (Custom): Use an approach other than the above two to make your system fault-tolerant. Here are some suggestions: 1) Use an alternative consensus algorithm like Raft (many java implementations available online) in your server implementation; 2) Implement your own fault-tolerant-consensus-based server-to-server protocol that is good enough to pass the tests. Note: Option #2 is not easy, but you may be able to do a good enough job to pass the tests without a complete or efficient implementation.
+3. **Custom protocol (optional extra credit)** (Custom): Use an approach other than the above two to make your system fault-tolerant. Here are some suggestions: 1) Use an alternative consensus algorithm like [Raft](https://raft.github.io/) (many java implementations available online) in your server implementation; 2) Implement your own fault-tolerant-consensus-based server-to-server protocol that is good enough to pass the tests. Note: Option #2 is not easy, but you may be able to do a good enough job to pass the tests without a complete or efficient implementation.
 
 ### Prerequisites ###
 
