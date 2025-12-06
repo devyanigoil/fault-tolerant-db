@@ -40,11 +40,9 @@ public class MyDBFaultTolerantServerZK extends MyDBSingleServer implements Watch
 	public static final int MAX_LOG_SIZE = 400;
 	private static final int ZK_DEFAULT_PORT = 2181;
 
-	// ZooKeeper constants (renamed for clarity)
 	private static final String REQUESTS_ROOT = "/requests";
 	private static final String REQUEST_PREFIX = REQUESTS_ROOT + "/op-";
 
-	// ZooKeeper client handle (renamed)
 	private ZooKeeper zooKeeper;
 
 	// Single-threaded executor to apply operations one-at-a-time
@@ -53,7 +51,6 @@ public class MyDBFaultTolerantServerZK extends MyDBSingleServer implements Watch
 	// Track processed znodes so we don't re-run them
 	private final Set<String> appliedZnodes = ConcurrentHashMap.newKeySet();
 
-	// Cassandra / backend names (renamed)
 	private final String keyspace;
 	private final InetSocketAddress cassandraAddress;
 	private Cluster cassandraCluster;
@@ -133,10 +130,8 @@ public class MyDBFaultTolerantServerZK extends MyDBSingleServer implements Watch
 		}
 	}
 
-	/**
-	 * Reads children under /requests and executes any unprocessed znodes
-	 * in sorted (total) order. This method also sets the watcher on REQUESTS_ROOT.
-	 */
+	 // Reads children under /requests and executes any unprocessed znodes
+	 // in sorted (total) order. This method also sets the watcher on REQUESTS_ROOT.
 	private void watchForNewZnodes() {
 		List<String> children;
 		try {
@@ -205,9 +200,7 @@ public class MyDBFaultTolerantServerZK extends MyDBSingleServer implements Watch
 		}
 	}
 
-	/**
-	 * ZooKeeper watcher callback: re-run watch when children change.
-	 */
+	 // ZooKeeper watcher callback: re-run watch when children change.
 	@Override
 	public void process(WatchedEvent event) {
 		if (event == null) return;
@@ -226,17 +219,13 @@ public class MyDBFaultTolerantServerZK extends MyDBSingleServer implements Watch
 		}
 	}
 
-	/**
-	 * On startup, replay whatever is already there.
-	 */
+	 // On startup, replay whatever is already there.
 	private void replayExistingZnodes() {
 		LOGGER.log(Level.INFO, "Replaying existing znodes at startup for {0}", REQUESTS_ROOT);
 		watchForNewZnodes();
 	}
 
-	/**
-	 * Apply a single SQL command to Cassandra.
-	 */
+	 // Apply a single SQL command to Cassandra.
 	private void executeCommand(String command) {
 		try {
 			if (cassandraSession != null) {
@@ -247,13 +236,10 @@ public class MyDBFaultTolerantServerZK extends MyDBSingleServer implements Watch
 			}
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error executing CQL: {0}", e.getMessage());
-			// let caller handle (we already logged)
 		}
 	}
 
-	/**
-	 * Handle message from client: just write it to ZooKeeper as a persistent sequential znode.
-	 */
+	 // Handle message from client: just write it to ZooKeeper as a persistent sequential znode.
 	@Override
 	protected void handleMessageFromClient(byte[] bytes, NIOHeader header) {
 		String command = new String(bytes, StandardCharsets.UTF_8);
@@ -273,16 +259,11 @@ public class MyDBFaultTolerantServerZK extends MyDBSingleServer implements Watch
 		}
 	}
 
-	/**
-	 * We don’t do server-to-server messaging in this design.
-	 */
 	protected void handleMessageFromServer(byte[] bytes, NIOHeader header) {
 		throw new UnsupportedOperationException("Not used in ZooKeeper-based implementation.");
 	}
 
-	/**
-	 * Close ZooKeeper, Cassandra, and executor resources.
-	 */
+	 // Close ZooKeeper, Cassandra, and executor resources.
 	@Override
 	public void close() {
 		super.close();
@@ -313,11 +294,9 @@ public class MyDBFaultTolerantServerZK extends MyDBSingleServer implements Watch
 			LOGGER.log(Level.WARNING, "Error closing ZooKeeper: {0}", e.getMessage());
 		}
 
-		// Close Cassandra
 		cleanupCassandra();
 	}
 
-	/** helper: cleanup cassandra resources */
 	private void cleanupCassandra() {
 		try {
 			if (cassandraSession != null) {
@@ -337,10 +316,6 @@ public class MyDBFaultTolerantServerZK extends MyDBSingleServer implements Watch
 		}
 	}
 
-	/**
-	 * Summarize a command for logging (keeps logs concise). If command is long,
-	 * show only the first 160 chars.
-	 */
 	private String summarizeCommand(String cmd) {
 		if (cmd == null) return "";
 		String s = cmd.trim();
